@@ -27,6 +27,19 @@ Three attitude groups among the 1,146 employed respondents:
 uninformed rather than afraid; **open & supported (382)** — the internal model
 of what works.
 
+### Iteration 1 — the simple attempt that rediscovers survey structure
+![Iteration 1 PCA](fig_iter1_pca.png)
+
+### Iteration 2 — choosing the number of clusters
+![Model selection](fig_iter2_selection.png)
+
+### Iteration 2 — the three attitude clusters
+![Attitude clusters](fig_iter2_clusters.png)
+
+### Data exploration
+![Missing values](eda_missingness.png)
+![Age and gender](eda_age_gender.png)
+
 ## Run it
 
 ```bash
