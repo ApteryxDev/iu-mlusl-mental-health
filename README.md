@@ -75,4 +75,3 @@ python3 03_refined_iteration.py
 
 OSMI Mental Health in Tech Survey 2016 —
 https://www.kaggle.com/osmi/mental-health-in-tech-2016
-(not committed to this repo; download separately into `task1_data/`).
