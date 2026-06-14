@@ -1,19 +1,14 @@
 # =============================================================================
-# 02_first_iteration.py  --  Step 3 of 4: my first, simple attempt
+# 02_first_iteration.py -- step 3 of 4: first, simple attempt
 # =============================================================================
-# Course: DLBDSMLUSL01, Case Study Task 1. Goes with chapter 5 of my report
-# ("Iteration 1: Simple and Quick -- and Wrong").
+# DLBDSMLUSL01, Task 1. Goes with chapter 5 of the report.
 #
-# The task tips literally say: "keep it simple in the first iteration and try
-# to come up with quick solutions". So I am not being clever here. I just take
-# the clean table from script 01, shrink it with PCA, and run k-Means. The
-# idea is to get SOMETHING working, look at it, and then improve.
-#
-# Spoiler for my own notes: this attempt does not really work, but it fails in
-# a useful way. It teaches me that the survey's structure (who was asked what)
-# is louder in the data than people's actual attitudes. I keep this script in
-# the final hand-in because explaining this failure is part of the story, and
-# the task asks me to "critically assess" my decisions.
+# The task tips say to keep the first iteration simple and quick, so I'm not
+# being clever: take the clean table from script 01, shrink it with PCA, run
+# k-Means, look at it. This one ends up not really working -- but it's worth
+# keeping in the hand-in, because the WAY it fails (the survey structure being
+# louder than people's attitudes) is what motivates iteration 2, and the task
+# asks me to critically assess my own decisions.
 # =============================================================================
 
 import numpy as np
@@ -25,37 +20,32 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 
-# I fix the random seed to 42 so that every time I run the script I get the
-# exact same numbers. Without this, k-Means could start from different random
-# points and give slightly different clusters each run, which would be
-# confusing when I write about specific numbers in the report.
+# fixed seed so the numbers I quote in the report are reproducible (k-Means
+# starts from random points otherwise and the clusters shift slightly each run)
 RANDOM = 42
 
-# Load the clean data and the demographics table from script 01.
 X = pd.read_csv("X_features.csv")
 profile = pd.read_csv("profiling.csv")
 
 # -----------------------------------------------------------------------------
 # Step 1: scaling.
 # -----------------------------------------------------------------------------
-# PCA looks at which directions vary the most. If one column happened to be on
-# a bigger numeric scale than the others, it would dominate just because of its
-# scale, not because it is more important. StandardScaler fixes this by putting
-# every column on the same footing (mean 0, similar spread) before PCA.
+# PCA picks the directions of biggest variance, so a column on a larger numeric
+# scale would dominate just for being bigger. StandardScaler puts everything on
+# the same footing first.
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # -----------------------------------------------------------------------------
-# Step 2: PCA to reduce the ~170 columns down to a handful.
+# Step 2: PCA down from ~170 columns to a handful.
 # -----------------------------------------------------------------------------
-# First I fit PCA on everything just to read off how much variance each new
-# component explains. Then I decide how many components I actually need.
+# fit on everything first just to read off the variance per component, then
+# decide how many to keep.
 pca = PCA(random_state=RANDOM)
 pca.fit(X_scaled)
 
-# I want enough components to keep about 80% of the information (variance).
-# Rather than use a fancy one-liner, I just add up the percentages one by one
-# until the running total passes 0.80, and count how many that took.
+# keep enough components for ~80% of the variance: add the ratios up until the
+# running total passes 0.80 and count how many that took.
 variance_so_far = 0.0
 n_components = 0
 for ratio in pca.explained_variance_ratio_:
@@ -66,37 +56,33 @@ for ratio in pca.explained_variance_ratio_:
 print("PCA needs", n_components, "components to keep 80% of the variance.")
 print("Just the first component already explains",
       round(pca.explained_variance_ratio_[0] * 100, 1), "% of the variance.")
-# That last number being big is already a little suspicious -- one single
-# direction explaining a lot usually means one feature is splitting the data.
+# one component explaining that much is suspicious -- usually means a single
+# feature is splitting the data
 
-# Now redo PCA keeping only that many components, and transform the data.
 pca = PCA(n_components=n_components, random_state=RANDOM)
 Z = pca.fit_transform(X_scaled)
 
 # -----------------------------------------------------------------------------
-# Step 3: investigate what that strong first component actually is.
+# Step 3: what IS that strong first component?
 # -----------------------------------------------------------------------------
-# My hunch: because I encoded "not asked" as its own category in script 01,
-# the self-employed people (who had loads of "not asked" answers) might sit far
-# apart from everyone else. If component 1 is really just "self-employed yes/no"
-# then it will line up almost perfectly with the self_employed column.
-# I check this with a correlation: +1 or -1 means they move together perfectly.
+# guess: encoding "not asked" as its own category in script 01 pushed the
+# self-employed (lots of "not asked" answers) far from everyone else. If
+# component 1 is basically "self-employed yes/no", it'll correlate ~1 with the
+# self_employed column. check:
 correlation = np.corrcoef(Z[:, 0], profile["self_employed"])[0, 1]
 print("Correlation between component 1 and 'self-employed':",
       round(correlation, 2), " <-- if this is near 1, that is my problem")
 
 # -----------------------------------------------------------------------------
-# Step 4: a quick k-Means with 3 clusters, no tuning at all.
+# Step 4: quick k-Means, k=3, no tuning.
 # -----------------------------------------------------------------------------
-# I just pick k=3 to get a first look. I am not justifying the number yet --
-# that careful choice happens in the next script.
+# k=3 is just a first look -- the proper choice of k is in script 03.
 kmeans = KMeans(n_clusters=3, n_init=10, random_state=RANDOM)
 labels = kmeans.fit_predict(Z)
 
-# Now I look at each cluster and ask: what fraction of it is self-employed?
-# If the clusters are really about attitudes, self-employment should be mixed
-# through them. If instead each cluster is basically all-or-nothing on
-# self-employment, then the clustering is just repeating the survey structure.
+# per cluster: what fraction is self-employed? if attitudes were driving this,
+# self-employment would be mixed through the clusters. if instead each cluster
+# is all-or-nothing on it, the clustering is just echoing the survey structure.
 print("\nWhat each cluster is made of:")
 for cluster_id in [0, 1, 2]:
     people = profile[labels == cluster_id]
@@ -110,11 +96,11 @@ print("mental health. The data prep was fine, but I clustered on the wrong")
 print("things. I will fix this in 03_refined_iteration.py.")
 
 # -----------------------------------------------------------------------------
-# Step 5: a picture showing the problem.
+# Step 5: a picture of the problem.
 # -----------------------------------------------------------------------------
-# If component 1 really is self-employment, then colouring points by
-# self-employment should match the left-right split in the plot. That visual
-# is much more convincing in the report than just stating the correlation.
+# colour the points by self-employment: if it lines up with the left-right
+# split, component 1 really is self-employment. more convincing in the report
+# than just stating the correlation.
 plt.figure(figsize=(6.5, 5))
 plt.scatter(Z[:, 0], Z[:, 1], c=profile["self_employed"],
             cmap="coolwarm", s=10, alpha=0.6)

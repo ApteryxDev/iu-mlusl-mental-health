@@ -1,26 +1,13 @@
 # =============================================================================
-# 01_preprocessing.py  --  Step 2 of 4: cleaning and turning text into numbers
+# 01_preprocessing.py -- step 2 of 4: cleaning, and turning text into numbers
 # =============================================================================
-# Course: DLBDSMLUSL01, Case Study Task 1. Goes with chapter 4 of my report
-# ("Data Preparation and Feature Engineering").
+# DLBDSMLUSL01, Task 1. Goes with chapter 4 of the report.
 #
-# In the exploration (script 00) I found four problems: structural missing
-# values, a messy free-text gender column, impossible ages, and free-text
-# opinion columns. Here I deal with all of them and turn the survey into a
-# clean table of numbers that the machine-learning libraries can actually use.
-#
-# My plan for this script, in order:
-#   1. throw away columns I cannot use (free text, almost-empty ones)
-#   2. fix the broken ages
-#   3. tidy the 70 gender spellings into a few groups
-#   4. put the demographics (age/gender/country) aside -- I do NOT want to
-#      cluster on them, only describe clusters with them afterwards
-#   5. turn the answers into numbers (ordinal where there is an order,
-#      yes/no flags, and one-hot for the rest)
-#   6. handle the "not asked" blanks as their own category, not a guess
-#
-# I keep a running list called `log` and print every decision, so that in the
-# report I can show exactly what I did and how many columns each step touched.
+# Script 00 found four problems: structural missing values, a messy free-text
+# gender column, impossible ages, and free-text opinion columns. This script
+# fixes all of them and produces a numeric table the sklearn libraries can use.
+# I keep a running `log` and print every decision so I can quote the exact
+# numbers (how many columns each step touched) in the report.
 # =============================================================================
 
 import re
@@ -31,16 +18,14 @@ RAW = "task1_data/mental-heath-in-tech-2016_20161114.csv"  # keep the "heath" ty
 log = []
 
 def note(message):
-    # tiny helper: print a decision AND remember it, so I can save the whole
-    # list of decisions to a text file at the end for the report.
+    # print it AND keep it, so I can dump the whole list to a file at the end
     print(message)
     log.append(message)
 
 df = pd.read_csv(RAW)
 note("Loaded raw data: " + str(df.shape[0]) + " rows x " + str(df.shape[1]) + " columns")
 
-# The question texts are very long, so I make short nicknames for the few
-# columns I refer to a lot. This just keeps the code readable.
+# short nicknames for the columns I refer to a lot (the real titles are huge)
 COL_SELF = "Are you self-employed?"
 COL_AGE = "What is your age?"
 COL_GENDER = "What is your gender?"
@@ -51,10 +36,9 @@ COL_COUNTRY_LIVE = "What country do you live in?"
 # -----------------------------------------------------------------------------
 # Step 1a: drop the free-text columns.
 # -----------------------------------------------------------------------------
-# The two "Why or why not?" columns are opinions written in people's own words.
-# To analyse them properly I would need text mining (NLP), which is a different
-# topic from this clustering task, so I drop them. Same for the "if yes, what
-# condition" follow-ups -- they are free text and only a few people answered.
+# The "Why or why not?" answers are opinions in people's own words -- handling
+# them properly is NLP, which is a different task, so drop them. Same for the
+# "if yes, what condition" follow-ups (free text, only a few people answered).
 free_text = []
 for column_name in df.columns:
     if column_name.startswith("Why or why not?"):
@@ -74,9 +58,8 @@ note("Dropped " + str(len(columns_to_drop)) + " free-text columns")
 # -----------------------------------------------------------------------------
 # Step 1b: drop columns that are almost entirely empty.
 # -----------------------------------------------------------------------------
-# Some follow-up questions were only shown to a small group, so they are more
-# than 75% empty. If I tried to fill them in, my made-up values would outnumber
-# the real answers, which would be dishonest. So I remove them.
+# Some follow-ups were shown to a small group only, so they're >75% empty.
+# Filling those in would mean my made-up values outnumber the real ones, so drop.
 missing_fraction = df.isna().mean()
 near_empty = missing_fraction[missing_fraction > 0.75].index.tolist()
 df = df.drop(columns=near_empty)
@@ -85,9 +68,9 @@ note("Dropped " + str(len(near_empty)) + " columns that were more than 75% empty
 # -----------------------------------------------------------------------------
 # Step 2: fix the impossible ages.
 # -----------------------------------------------------------------------------
-# In script 00 I saw ages like 3 and 323. I decide that anything outside 15-80
-# is a typing error. I replace those with the median age (a normal middle
-# value), so one weird number does not distort everything later.
+# script 00 showed ages like 3 and 323. Treat anything outside 15-80 as a typo,
+# blank it, then fill all blanks with the median so one weird number can't skew
+# the scaling later.
 age = df[COL_AGE].copy()
 how_many_bad = (~age.between(15, 80)).sum()
 age[~age.between(15, 80)] = np.nan          # mark the bad ones as missing first
@@ -98,10 +81,8 @@ note("Age: fixed " + str(how_many_bad) + " impossible values, set them to median
 # -----------------------------------------------------------------------------
 # Step 3: tidy up the gender column (70 spellings -> 3 groups + unknown).
 # -----------------------------------------------------------------------------
-# People typed gender freely, so I write a small function with rules to sort
-# each answer into male / female / other. I check "female" before "male" on
-# purpose, because the word "female" contains the letters "male" and I do not
-# want to mislabel women as men.
+# rule-based sort into male/female/other. Check "female" BEFORE "male" -- the
+# string "female" contains "male", and I don't want to mislabel women as men.
 def map_gender(value):
     if not isinstance(value, str):
         return "unknown"                    # blank or not text
@@ -110,10 +91,8 @@ def map_gender(value):
         return "female"
     if "male" in text or "man" in text or text == "m":
         return "male"
-    return "other_or_nonbinary"             # everything else (non-binary, etc.)
+    return "other_or_nonbinary"             # non-binary, etc.
 
-# Apply that function to every row with a plain loop, so it is obvious what
-# is happening (I could use .apply(), but the loop reads more clearly).
 gender_list = []
 for raw_value in df[COL_GENDER]:
     gender_list.append(map_gender(raw_value))
@@ -121,13 +100,13 @@ gender = pd.Series(gender_list)
 note("Gender cleaned into groups: " + str(gender.value_counts().to_dict()))
 
 # -----------------------------------------------------------------------------
-# Step 4: separate the demographics from the questions I will cluster on.
+# Step 4: separate the demographics from the questions I'll cluster on.
 # -----------------------------------------------------------------------------
-# Important choice: HR cares about attitudes at work, not about which country
-# someone lives in. If I leave country in, the clustering would mostly split
-# people by nationality (because one-hot country columns are many and strong).
-# So I save age/gender/country/self-employed in a SEPARATE table that I only
-# use later to DESCRIBE the clusters, and I remove them from the main data.
+# This is a deliberate choice. HR cares about attitudes at work, not where
+# someone lives. If I leave country in, the one-hot country columns are so many
+# and so strong that the clustering would mostly split people by nationality.
+# So age/gender/country/self-employed go in a SEPARATE table I only use to
+# describe the clusters afterwards, and come out of the main data here.
 profiling = pd.DataFrame({
     "age": age,
     "gender": gender,
@@ -144,11 +123,10 @@ note("Set aside " + str(len(demographic_columns))
     + " demographic columns for profiling only (not for clustering)")
 
 # -----------------------------------------------------------------------------
-# Step 5a: turn the multi-select job position into simple yes/no columns.
+# Step 5a: split the multi-select job position into yes/no columns.
 # -----------------------------------------------------------------------------
-# This question let people tick several roles, joined by "|" (e.g.
-# "Back-end Developer|DevOps"). I split it into one 0/1 column per role using
-# str.get_dummies, which is exactly built for this "|"-separated case.
+# people could tick several roles, joined by "|" -- str.get_dummies(sep="|")
+# is made exactly for this.
 positions = df[COL_POSITION].fillna("").str.get_dummies(sep="|")
 new_names = []
 for name in positions.columns:
@@ -158,11 +136,10 @@ df = df.drop(columns=[COL_POSITION])
 note("Split work position into " + str(positions.shape[1]) + " yes/no flag columns")
 
 # -----------------------------------------------------------------------------
-# Step 5b: company size has a natural order, so I encode it as numbers 1..6.
+# Step 5b: company size is ordered, so encode it 1..6 (0 = not applicable).
 # -----------------------------------------------------------------------------
-# "1-5" is smaller than "6-25" etc., so it makes sense to keep that order
-# instead of treating the sizes as unrelated categories. I use 0 to mean
-# "no company" for the self-employed (who were not asked this).
+# "1-5" < "6-25" < ... so keep that order instead of treating sizes as unrelated
+# categories. 0 for the self-employed, who weren't asked.
 size_order = {"1-5": 1, "6-25": 2, "26-100": 3,
               "100-500": 4, "500-1000": 5, "More than 1000": 6}
 company_size = df[COL_SIZE].map(size_order)
@@ -171,35 +148,32 @@ df = df.drop(columns=[COL_SIZE])
 note("Company size encoded as an ordered number 1-6 (0 = not applicable)")
 
 # -----------------------------------------------------------------------------
-# Step 6: deal with the remaining text answers and the "not asked" blanks.
+# Step 6: remaining text answers + the "not asked" blanks.
 # -----------------------------------------------------------------------------
-# All the blanks still left are the structural ones from script 00 (questions
-# the self-employed were never shown). Instead of guessing an answer, I label
-# them literally as "Not applicable" so the model knows it was "not asked".
+# the blanks left here are the structural ones from script 00. Don't guess --
+# label them "Not applicable" so it stays a real category.
 text_columns = df.select_dtypes(include=["object", "str"]).columns.tolist()
 df[text_columns] = df[text_columns].fillna("Not applicable")
 note("Filled the 'not asked' blanks with 'Not applicable' in "
     + str(len(text_columns)) + " text columns")
 
-# Now one-hot encode the text columns: each possible answer becomes its own
-# 0/1 column. The question texts are long, so I shorten them for the new
-# column-name prefixes (otherwise the names get unwieldy).
+# one-hot the text columns. shorten the (very long) question titles first or the
+# new column names get unmanageable.
 short_prefixes = []
 for column_name in text_columns:
     short_prefixes.append(column_name[:40])
 dummies = pd.get_dummies(df[text_columns], prefix=short_prefixes)
 
-# The columns that were already numeric (0/1 flags like self-employed) I keep
-# as they are. One of them ("is your employer a tech company") still has the
-# structural blanks; since the self-employed flag already captures that group,
-# filling these with 0 adds no false information.
+# the already-numeric 0/1 flags stay as-is. one of them ("is your employer a
+# tech company") still has structural blanks, but the self_employed flag already
+# captures that group, so filling with 0 adds no false info.
 numeric_columns = df.drop(columns=text_columns)
 how_many_numeric_blanks = int(numeric_columns.isna().sum().sum())
 numeric_columns = numeric_columns.fillna(0)
 note("Filled " + str(how_many_numeric_blanks)
     + " structural blanks in numeric 0/1 columns with 0")
 
-# Glue everything together into one big numeric table.
+# glue it all into one numeric table
 X = pd.concat([
     numeric_columns.reset_index(drop=True),
     company_size.rename("company_size_ordinal").reset_index(drop=True),
@@ -209,14 +183,12 @@ X = pd.concat([
 note("Combined everything into a feature table: "
     + str(X.shape[0]) + " rows x " + str(X.shape[1]) + " columns")
 
-# Final tidy-up: drop any column that is the same value for everyone, because
-# a column that never changes gives the algorithm no information.
+# drop columns that are constant -- they give the algorithm nothing
 unchanging = X.columns[X.var() == 0].tolist()
 if len(unchanging) > 0:
     X = X.drop(columns=unchanging)
     note("Dropped " + str(len(unchanging)) + " columns that never changed")
 
-# Save the results so the next scripts can load them.
 X.to_csv("X_features.csv", index=False)
 profiling.to_csv("profiling.csv", index=False)
 with open("preprocessing_report.txt", "w") as f:
