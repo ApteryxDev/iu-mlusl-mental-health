@@ -22,10 +22,11 @@ visualisations, per-cluster profiles, and programme leverage points.
 
 ## Result
 
-Three attitude groups among the 1,146 employed respondents:
-**closed & fearful (305)** — affected but silent; **uncertain (459)** —
-uninformed rather than afraid; **open & supported (382)** — the internal model
-of what works.
+Three attitude groups among the ~1,146 employed respondents:
+
+- **Open & supported (~380)** — 89% comfortable talking to their supervisor, 86% expect no negative consequences; the internal model of what works.
+- **Uncertain (~452)** — dominated by "maybe" and "I don't know"; uninformed rather than afraid, and the cheapest group to move.
+- **Closed & fearful (~314)** — 83% not comfortable disclosing, 59% expect negative consequences; affected but silent.
 
 ### Iteration 1 — the simple attempt that rediscovers survey structure
 ![Iteration 1 PCA](fig_iter1_pca.png)
@@ -40,6 +41,23 @@ of what works.
 ![Missing values](eda_missingness.png)
 ![Age and gender](eda_age_gender.png)
 
+## Choosing the number of clusters
+
+Four diagnostics over k = 2–8. Silhouette mildly favours k = 2, but three
+groups are balanced and each tells a distinct, actionable story, so k = 3 was
+chosen (interpretability over the metric optimum).
+
+```
+ k | inertia | silhouette | DaviesBouldin | BIC
+ 2 |   29878 |      0.113 |          2.65 | 61421
+ 3 |   27695 |      0.100 |          2.72 | 61111
+ 4 |   25838 |      0.111 |          2.46 | 60853
+ 5 |   24704 |      0.111 |          2.32 | 60514
+ 6 |   23661 |      0.096 |          2.29 | 60279
+ 7 |   22949 |      0.089 |          2.33 | 60314
+ 8 |   22085 |      0.095 |          2.29 | 60049
+```
+
 ## Run it
 
 ```bash
@@ -50,4 +68,11 @@ pip install -r requirements.txt
 python3 00_exploration.py
 python3 01_preprocessing.py
 python3 02_first_iteration.py
-python3
+python3 03_refined_iteration.py
+```
+
+## Data
+
+OSMI Mental Health in Tech Survey 2016 —
+https://www.kaggle.com/osmi/mental-health-in-tech-2016
+(not committed to this repo; download separately into `task1_data/`).
