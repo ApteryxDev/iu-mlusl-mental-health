@@ -1,0 +1,20 @@
+Loaded raw data: 1433 rows x 63 columns
+Dropped 5 free-text columns: ['Why or why not?', 'Why or why not?.1', 'If yes, what condition(s) have you been diagnosed ', 'If maybe, what condition(s) do you believe you hav', 'If so, what condition(s) were you diagnosed with?']
+Dropped 9 columns with >75% missing values:
+   - Is your primary role within your company related to tech/IT?... (82% missing)
+   - Do you have medical coverage (private insurance or state-provided) which include... (80% missing)
+   - Do you know local or online resources to seek help for a mental health disorder?... (80% missing)
+   - If you have been diagnosed or treated for a mental health disorder, do you ever ... (80% missing)
+   - If you have revealed a mental health issue to a client or business contact, do y... (90% missing)
+   - If you have been diagnosed or treated for a mental health disorder, do you ever ... (80% missing)
+   - If you have revealed a mental health issue to a coworker or employee, do you bel... (80% missing)
+   - Do you believe your productivity is ever affected by a mental health issue?... (80% missing)
+   - If yes, what percentage of your work time (time performing primary or secondary ... (86% missing)
+Age: replaced 3 implausible values (outside 15-80) by median 33
+Gender mapped to 3+unknown groups: {'male': 1055, 'female': 343, 'other_or_nonbinary': 32, 'unknown': 3}
+Moved 6 demographic columns out of the feature set (profiling only)
+Exploded work position into 12 binary flags
+Company size encoded ordinally (1-6), 0 = not applicable (self-employed)
+Filled structural NaN with 'Not applicable' in 37 categorical columns
+Filled 287 structural NaN in numeric 0/1 columns with 0
+Final feature matrix: 1433 rows x 174 columns
