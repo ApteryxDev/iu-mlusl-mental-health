@@ -1,8 +1,11 @@
-cat > README.md << 'EOF'
 # Mental Health in Tech 2016 — Unsupervised Learning Case Study
 
-Case study for **DLBDSMLUSL01 — Machine Learning: Unsupervised Learning and
-Feature Engineering** (IU), Task 1: *Mental Health in Technology-related Jobs*.
+**Author:** YALCIN Alp Ege
+**Matriculation No.:** 42308653
+**Course:** DLBDSMLUSL01 — Machine Learning: Unsupervised Learning and Feature Engineering
+
+Case study for IU International University of Applied Sciences, Task 1:
+*Mental Health in Technology-related Jobs*.
 
 Goal: turn the messy OSMI 2016 survey (1,433 respondents × 63 questions) into
 something HR can act on — clusters of similar respondents, low-dimensional
@@ -34,12 +37,4 @@ pip install -r requirements.txt
 python3 00_exploration.py
 python3 01_preprocessing.py
 python3 02_first_iteration.py
-python3 03_refined_iteration.py
-```
-
-## Data
-
-OSMI Mental Health in Tech Survey 2016 —
-https://www.kaggle.com/osmi/mental-health-in-tech-2016
-(not committed to this repo; download separately into `task1_data/`).
-EOF
+python3
