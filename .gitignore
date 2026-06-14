@@ -2,3 +2,5 @@
 __pycache__/
 task1_data/
 *.csv
+.DS_Store
+.DS_Store
