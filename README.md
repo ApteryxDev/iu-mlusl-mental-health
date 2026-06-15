@@ -11,7 +11,7 @@ Goal: turn the messy OSMI 2016 survey (1,433 respondents × 63 questions) into
 something HR can act on — clusters of similar respondents, low-dimensional
 visualisations, per-cluster profiles, and programme leverage points.
 
-## Workflow = 4 scripts = 4 report chapters
+## Workflow
 
 | Step | Script | What it does | Report chapter |
 |---|---|---|---|
