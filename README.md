@@ -62,8 +62,7 @@ chosen (interpretability over the metric optimum).
 
 ```bash
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-# put the Kaggle CSV under task1_data/  (filename keeps Kaggle's "heath" typo):
+pip install -r requirements.txt:
 #   task1_data/mental-heath-in-tech-2016_20161114.csv
 python3 00_exploration.py
 python3 01_preprocessing.py
