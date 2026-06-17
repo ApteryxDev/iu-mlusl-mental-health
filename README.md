@@ -2,13 +2,13 @@
 
 **Author:** YALCIN Alp Ege
 **Matriculation No.:** 42308653
-**Course:** DLBDSMLUSL01 — Machine Learning: Unsupervised Learning and Feature Engineering
+**Course:** DLBDSMLUSL01 : Machine Learning: Unsupervised Learning and Feature Engineering
 
 Case study for IU International University of Applied Sciences, Task 1:
 *Mental Health in Technology-related Jobs*.
 
 Goal: turn the messy OSMI 2016 survey (1,433 respondents × 63 questions) into
-something HR can act on — clusters of similar respondents, low-dimensional
+something HR can act on clusters of similar respondents, low-dimensional
 visualisations, per-cluster profiles, and programme leverage points.
 
 ## Workflow
@@ -17,7 +17,7 @@ visualisations, per-cluster profiles, and programme leverage points.
 |---|---|---|---|
 | 1. Explore | `00_exploration.py` | Descriptive stats, missingness, dirty columns | 2 |
 | 2. Preprocess | `01_preprocessing.py` | Clean, engineer & encode → numeric matrix | 4 |
-| 3. Quick first try | `02_first_iteration.py` | Simple PCA + k-Means — fails informatively (rediscovers survey routing) | 5 |
+| 3. Quick first try | `02_first_iteration.py` | Simple PCA + k-Means fails informatively (rediscovers survey routing) | 5 |
 | 4. Step back & improve | `03_refined_iteration.py` | Employed-only, 12 attitude questions, k-Means vs GMM, 4 selection metrics | 6–8 |
 
 ## Result
