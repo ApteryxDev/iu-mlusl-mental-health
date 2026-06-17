@@ -1,11 +1,11 @@
 # =============================================================================
-# 02_first_iteration.py -- step 3 of 4: first, simple attempt
+# 02_first_iteration.py step 3 of 4: first, simple attempt
 # =============================================================================
 # DLBDSMLUSL01, Task 1. Goes with chapter 5 of the report.
 #
 # The task tips say to keep the first iteration simple and quick, so I'm not
 # being clever: take the clean table from script 01, shrink it with PCA, run
-# k-Means, look at it. This one ends up not really working -- but it's worth
+# k-Means, look at it. This one ends up not really working but it's worth
 # keeping in the hand-in, because the WAY it fails (the survey structure being
 # louder than people's attitudes) is what motivates iteration 2, and the task
 # asks me to critically assess my own decisions.
