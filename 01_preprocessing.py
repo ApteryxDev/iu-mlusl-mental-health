@@ -1,5 +1,5 @@
 # =============================================================================
-# 01_preprocessing.py -- step 2 of 4: cleaning, and turning text into numbers
+# 01_preprocessing.py  step 2 of 4: cleaning, and turning text into numbers
 # =============================================================================
 # DLBDSMLUSL01, Task 1. Goes with chapter 4 of the report.
 #
@@ -36,7 +36,7 @@ COL_COUNTRY_LIVE = "What country do you live in?"
 # -----------------------------------------------------------------------------
 # Step 1a: drop the free-text columns.
 # -----------------------------------------------------------------------------
-# The "Why or why not?" answers are opinions in people's own words -- handling
+# The "Why or why not?" answers are opinions in people's own words handling
 # them properly is NLP, which is a different task, so drop them. Same for the
 # "if yes, what condition" follow-ups (free text, only a few people answered).
 free_text = []
@@ -125,7 +125,7 @@ note("Set aside " + str(len(demographic_columns))
 # -----------------------------------------------------------------------------
 # Step 5a: split the multi-select job position into yes/no columns.
 # -----------------------------------------------------------------------------
-# people could tick several roles, joined by "|" -- str.get_dummies(sep="|")
+# people could tick several roles, joined by "|"  str.get_dummies(sep="|")
 # is made exactly for this.
 positions = df[COL_POSITION].fillna("").str.get_dummies(sep="|")
 new_names = []
