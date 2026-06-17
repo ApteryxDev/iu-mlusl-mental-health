@@ -1,8 +1,8 @@
 # =============================================================================
-# 00_exploration.py -- step 1 of 4: looking at the data before touching anything
+# 00_exploration.py  step 1 of 4: looking at the data before touching anything
 # =============================================================================
 # DLBDSMLUSL01, Task 1 (OSMI 2016 Mental Health in Tech). Goes with chapter 2
-# of the report. No cleaning or modelling here yet -- the survey is big (63
+# of the report. No cleaning or modelling here yet  the survey is big (63
 # questions) and messy, so I just want to know what I'm dealing with first:
 # how big it is, how bad the missing values are, what's wrong with age/gender,
 # and which columns are free text. Whatever I find here decides the cleaning
@@ -29,7 +29,7 @@ print("Column types:", df.dtypes.value_counts().to_dict())
 # mostly "object" = text, which I'll have to turn into numbers later
 
 # -----------------------------------------------------------------------------
-# missing values -- and are they random?
+# missing values  and are they random?
 # -----------------------------------------------------------------------------
 missing_fraction = df.isna().mean().sort_values(ascending=False)
 
