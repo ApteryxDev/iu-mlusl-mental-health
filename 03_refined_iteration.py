@@ -1,5 +1,5 @@
 # =============================================================================
-# 03_refined_iteration.py -- step 4 of 4: stepping back and doing it properly
+# 03_refined_iteration.py step 4 of 4: stepping back and doing it properly
 # =============================================================================
 # DLBDSMLUSL01, Task 1. Goes with chapters 6-8 of the report.
 #
@@ -48,7 +48,7 @@ print("Employed respondents kept:", len(survey_employed))
 # -----------------------------------------------------------------------------
 # Fix 2: pick a small set of attitude questions.
 # -----------------------------------------------------------------------------
-# not all 60 questions -- only feelings/workplace ones. The titles are long, so
+# not all 60 questions only feelings/workplace ones. The titles are long, so
 # I match on key phrases instead of typing each full title.
 phrases_i_want = [
     "comfortable discussing",
@@ -143,7 +143,7 @@ for i in range(len(k_values)):
 # silhouette technically prefers k=2, but two groups tell HR almost nothing. at
 # k=3 the groups are a decent size and each tells a different story, so I go with
 # 3 and explain the trade-off in 6.1. picking interpretability over a metric is a
-# judgement call -- I say so rather than pretending the metric chose for me.
+# judgement call I say so rather than pretending the metric chose for me.
 chosen_k = 3
 
 # -----------------------------------------------------------------------------
@@ -199,7 +199,7 @@ plt.close()
 # Figure 2: clusters on the first two PCA components.
 # -----------------------------------------------------------------------------
 # unlike iteration 1 (separate corners) I expect one connected cloud grading
-# from "closed" to "open" -- which is why the soft GMM assignment fits here.
+# from "closed" to "open" which is why the soft GMM assignment fits here.
 plt.figure(figsize=(6.5, 5))
 plt.scatter(Z[:, 0], Z[:, 1], c=kmeans_labels, cmap="Set2", s=14, alpha=0.75)
 plt.title("Iteration 2: three attitude clusters (employed people only)")
@@ -211,7 +211,7 @@ plt.savefig("fig_iter2_clusters.png", dpi=130)
 plt.close()
 
 # -----------------------------------------------------------------------------
-# Describe each cluster -- the part that actually answers HR.
+# Describe each cluster the part that actually answers HR.
 # -----------------------------------------------------------------------------
 # per cluster, the % giving each answer to a few key questions. reading these is
 # how I name the groups in the report (e.g. one is 84% "not comfortable").
