@@ -30,7 +30,7 @@ This repository answers that question using the **OSMI Mental Health in Tech Sur
 
 The analysis deliberately keeps the complete modelling story visible: an initially convincing clustering solution is rejected after it is shown to reproduce the survey structure rather than employee attitudes. A refined second iteration then focuses on the employed population and a smaller set of workplace-attitude features.
 
-> **Core outcome:** three interpretable groups among **1,146 employed respondents** — **Closed & fearful**, **Uncertain**, and **Open & supported**.
+> **Core outcome:** three interpretable groups among **1,146 employed respondents** : **Closed & fearful**, **Uncertain**, and **Open & supported**.
 
 ### At a glance
 
@@ -140,15 +140,15 @@ Silhouette score mildly favours `k = 2`, while the Davies–Bouldin index and BI
 
 ## 🧠 Points of Leverage for HR
 
-### 🔒 Closed & fearful — establish psychological safety first
+### 🔒 Closed & fearful : establish psychological safety first
 
 General awareness campaigns are unlikely to reach employees who believe disclosure may harm them. Priority measures are confidential access routes, explicit non-retaliation commitments, consistent manager behaviour, and visible evidence that seeking support does not damage careers.
 
-### ❔ Uncertain — remove ambiguity
+### ❔ Uncertain : remove ambiguity
 
 This group appears more uninformed than openly resistant. HR can address it through plain explanations of available support, confidentiality boundaries, escalation routes, and concrete examples of how the process works.
 
-### 🤝 Open & supported — learn from existing good practice
+### 🤝 Open & supported : learn from existing good practice
 
 This group is not the primary intervention target. It can help identify teams, managers, and communication practices that already create safety and trust, allowing successful behaviours to be reproduced elsewhere.
 
